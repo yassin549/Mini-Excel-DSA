@@ -280,3 +280,195 @@ class Excel {
                     newCell->right = nextPointer;
                     currPointer->right = newCell;
                     newCell->left = currPointer;
+                    newColHead = newCell;
+                    nextPointer = nextPointer->down;
+                    currPointer = currPointer->down;
+                }
+            }
+            else{
+                // if it is the last column
+                makeNewColumnAtRight();
+            }
+
+            cols++;
+        }
+
+        void makeNewColumnAtRight(){
+            Cell<T> *colHead = head;
+            while (colHead->right != nullptr){
+                colHead = colHead->right;
+            }
+
+            Cell<T> *newColHead = new Cell<T>();
+            Cell<T> *temp = colHead->down;
+            colHead->right = newColHead;
+            newColHead->left = colHead;
+            Cell<T> *curr = newColHead;
+
+            for (int i = 1; i < rows; i++){
+                Cell<T> *newCell = new Cell<T>();
+                curr->down = newCell;
+                newCell->up = curr;
+                temp->right = newCell;
+                newCell->left = temp;
+
+                curr = newCell;
+                temp = temp->down;
+            }
+        }
+
+        void insertLeft(){
+
+            // get the first cell of the selected column
+            Cell<T> *colHead = selected;
+            while (colHead->up != nullptr){
+                colHead = colHead->up;
+            }
+
+            if (colHead->left){
+                // if there is a column to the left of the selected column
+
+                Cell<T> *prevColHead = colHead->left;
+                Cell<T> *prevPointer = prevColHead->down;
+                Cell<T> *currPointer = colHead->down;
+                Cell<T> *newColHead = new Cell<T>();
+                newColHead->right = colHead;
+                colHead->left = newColHead;
+                newColHead->left = prevColHead;
+                prevColHead->right = newColHead;
+
+                for (int i = 1; i < rows; i++){
+                    Cell<T> *newCell = new Cell<T>();
+                    newColHead->down = newCell;
+                    newCell->up = newColHead;
+                    prevPointer->right = newCell;
+                    newCell->left = prevPointer;
+                    currPointer->left = newCell;
+                    newCell->right = currPointer;
+
+                    newColHead = newCell;
+                    prevPointer = prevPointer->down;
+                    currPointer = currPointer->down;
+                }
+            }
+            else{
+                // if this is the first column
+                makeNewColumnAtLeft();
+                
+            }
+            cols++;
+        }
+
+        void makeNewColumnAtLeft(){
+            Cell<T> *colHead = head;
+
+            Cell<T> *newColHead = new Cell<T>();
+            Cell<T> *temp = colHead->down;
+            colHead->left = newColHead;
+            newColHead->right = colHead;
+            head = newColHead;
+
+            for (int i = 1; i < rows; i++){
+                Cell<T> *newCell = new Cell<T>();
+                newColHead->down = newCell;
+                newCell->up = newColHead;
+                temp->left = newCell;
+                newCell->right = temp;
+
+                newColHead = newCell;
+
+                temp = temp->down;
+            }
+        }
+
+        void insertCellByRightShift(){
+
+            // insert a new column at the right most end first
+            Cell<T> *temp = selected;
+            
+            // getting to the right most end top cell
+            while (temp->right != nullptr){
+                temp = temp->right;
+            }
+
+            while (temp->up != nullptr){
+                temp = temp->up;
+            }
+
+            // now temp is the top right most cell
+            // inserting a new column at the right most end
+            makeNewColumnAtRight();
+
+            // from selected cell, right shift all the cells
+            Cell<T> *current = selected;
+            temp = current->left;
+
+            Cell<T> *newCell = new Cell<T>();
+            if (temp){
+                temp->right = newCell;
+                newCell->left = temp;
+            }
+            newCell->right = current;
+            current->left = newCell;
+
+            temp = newCell;
+
+            // if it is the first row
+            if (!current->up){
+                Cell<T> *below = current->down;
+
+                if (selected == head){
+                    head = newCell;
+                }
+
+                while (below){
+                    temp->down = below;
+                    below->up = temp;
+
+                    temp = temp->right;
+                    below = below->right;
+                }
+
+            }
+            else if (!current->down){
+                // if it is the last row
+                Cell<T> *above = current->up;
+
+                while (above){
+                    temp->up = above;
+                    above->down = temp;
+
+                    temp = temp->right;
+                    above = above->right;
+                }
+
+            } 
+            else {
+                // if it is a middle row
+                Cell<T> *above = current->up;
+                Cell<T> *below = current->down;
+
+                while (above){
+                    temp->up = above;
+                    above->down = temp;
+                    below->up = temp;
+                    temp->down = below;
+
+                    temp = temp->right;
+                    above = above->right;
+                    below = below->right;
+                }
+
+            }
+            temp->left->right = nullptr;
+            cols++;
+        }
+
+        void insertCellByDownShift(){
+            // insert a new row at the bottom most end first
+            Cell<T> *temp = selected;
+
+            // get to the bottom most end left cell
+            while (temp->down != nullptr){
+                temp = temp->down;
+            }
