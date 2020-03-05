@@ -472,3 +472,99 @@ class Excel {
             while (temp->down != nullptr){
                 temp = temp->down;
             }
+            while (temp->left != nullptr){
+                temp = temp->left;
+            }
+
+            // now temp is the bottom left most cell
+            // inserting a new row at the bottom most end
+            makeNewRowAtBottom();
+
+            // from selected cell, down shift all the cells
+            Cell<T> *current = selected;
+            temp = current->up;
+
+            Cell<T> *newCell = new Cell<T>();
+            if (temp){
+                temp->down = newCell;
+                newCell->up = temp;
+            }
+            newCell->down = current;
+            current->up = newCell;
+
+            temp = newCell;
+
+            if (!current->left){
+                // it is the first column
+                Cell<T> *right = current->right;
+
+                if (selected == head){
+                    head = newCell;
+                }
+
+                while (right){
+                    temp->right = right;
+                    right->left = temp;
+
+                    temp = temp->down;
+                    right = right->down;
+                }
+            }
+            else if (!current->right){
+                // it is the last column
+                Cell<T> *left = current->left;
+
+                while (left){
+                    temp->left = left;
+                    left->right = temp;
+
+                    temp = temp->down;
+                    left = left->down;
+                }
+            }
+            else{
+                // it is a middle column
+                Cell<T> *left = current->left;
+                Cell<T> *right = current->right;
+
+                while (right){
+                    temp->right = right;
+                    right->left = temp;
+                    left->right = temp;
+                    temp->left = left;
+
+                    temp = temp->down;
+                    right = right->down;
+                    left = left->down;
+                }
+            }
+
+            temp->up->down = nullptr;
+            rows++;
+        }
+
+        void deleteCellByLeftShift(){
+            Cell<T> *current = selected;
+
+            // a new cell will be added to the end of the selected row
+            Cell<T> *temp = current;
+
+            while (temp->right != nullptr){
+                temp = temp->right;
+            }
+
+            Cell<T> *newCell = new Cell<T>();
+            temp->right = newCell;
+            newCell->left = temp;
+
+            // deleting the selected cell
+            temp = current->left;
+                
+            if (temp){
+                temp->right = current->right;
+                current->right->left = temp;    
+            }
+            else{
+                // if it is the first column
+                current->right->left = nullptr;
+            }
