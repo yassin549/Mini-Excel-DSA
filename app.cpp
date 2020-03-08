@@ -568,3 +568,291 @@ class Excel {
                 // if it is the first column
                 current->right->left = nullptr;
             }
+            // left shifting the cells
+            if (!current->up){
+                // it is the first row
+                Cell<T> *below = current->down;
+                temp = current->right;
+
+                while (temp){
+                    below->up = temp;
+                    temp->down = below;
+
+                    temp = temp->right;
+                    below = below->right;
+                }
+
+                if (selected == head){
+                    head = current->right;
+                }
+            }
+            else if (!current->down){
+                // it is the last row
+                Cell<T> *above = current->up;
+                temp = current->right;
+
+                while (temp){
+                    above->down = temp;
+                    temp->up = above;
+
+                    temp = temp->right;
+                    above = above->right;
+                }
+            }
+            else{
+                // it is a middle row
+                Cell<T> *below = current->down;
+                Cell<T> *above = current->up;
+                temp = current->right;
+
+                while (temp){
+                    below->up = temp;
+                    temp->down = below;
+                    above->down = temp;
+                    temp->up = above;
+
+                    temp = temp->right;
+                    below = below->right;
+                    above = above->right;
+                }
+            }
+
+            selected = current->right;
+        }
+
+        void deleteCellByUpShift(){
+            Cell<T> *current = selected;
+            Cell<T> *temp = current;
+
+            // a new cell will be added to the end of the selected column
+            while (temp->down != nullptr){
+                temp = temp->down;
+            }
+
+            Cell<T> *newCell = new Cell<T>();
+            temp->down = newCell;
+            newCell->up = temp;
+
+            // deleting the selected cell
+            temp = current->up;
+
+            if(temp){
+                temp->down = current->down;
+                current->down->up = temp;
+            }
+            else{
+                // if it is the first row
+                current->down->up = nullptr;
+            }
+
+            // up shifting the cells
+            if (!current->left){
+                // it is the first column
+                Cell<T> *right = current->right;
+                temp = current->down;
+
+                while(temp){
+                    temp->right = right;
+                    right->left = temp;
+
+                    temp = temp->down;
+                    right = right->down;
+                }
+
+                if (selected == head){
+                    head = current->down;
+                }
+            }
+            else if (!current->right){
+ 
+               // it is the last column
+                Cell<T> *left = current->left;
+                temp = current->down;
+
+                while(temp){
+                    temp->left = left;
+                    left->right = temp;
+
+                    temp = temp->down;
+                    left = left->down;
+                }
+            }
+            else{
+                // it is a middle column
+                Cell<T> *right = current->right;
+                Cell<T> *left = current->left;
+                temp = current->down;
+
+                while(temp){
+                    temp->right = right;
+                    right->left = temp;
+                    temp->left = left;
+                    left->right = temp;
+
+                    temp = temp->down;
+                    right = right->down;
+                    left = left->down;
+                }
+            }
+
+            selected = current->down;
+        }
+
+        void deleteColumn(){
+            Cell<T> *current = selected;
+            Cell<T> *temp = current;
+
+            // getting to the top of selected column
+            while (temp->up != nullptr){
+                temp = temp->up;
+            }
+
+            // deleting the selected column
+            if (!temp->left){
+                // it is the first column
+                head = temp->right;
+                Cell<T> *right = temp->right;
+
+                while (right){
+                    right->left = nullptr;
+                    right = right->down;
+                }
+
+                selected = current->right;
+            }
+            else if (!temp->right){
+                // it is the last column
+                Cell<T> *left = temp->left;
+
+                while (left){
+                    left->right = nullptr;
+                    left = left->down;
+                }
+
+                selected = current->left;
+            }
+            else{
+                // it is a middle column
+                Cell<T> *left = temp->left;
+                Cell<T> *right = temp->right;
+
+                while (left){
+                    left->right = right;
+                    right->left = left;
+
+                    left = left->down;
+                    right = right->down;
+                }
+
+                selected = current->left;
+            }
+
+            cols--;
+        }
+
+        void deleteRow(){
+            Cell<T> *current = selected;
+            Cell<T> *temp = current;
+
+            // getting to the extreme left of selected row
+            while (temp->left != nullptr){
+                temp = temp->left;
+            }
+
+            // deleting the selected row
+            if (!temp->up){
+                // it is the first row
+                head = head->down;
+                Cell<T> *down = temp->down;
+
+                while (down){
+                    down->up = nullptr;
+                    down = down->right;
+                }
+
+                selected = current->down;
+            }
+            else if (!temp->down){
+                // it is the last row
+                Cell<T> *up = temp->up;
+
+                while (up){
+                    up->down = nullptr;
+                    up = up->right;
+                }
+
+                selected = current->up;
+            }
+            else{
+                // it is a middle row
+                Cell<T> *up = temp->up;
+                Cell<T> *down = temp->down;
+
+                while (up){
+                    up->down = down;
+                    down->up = up;
+
+                    up = up->right;
+                    down = down->right;
+                }
+
+                selected = current->up;
+            }
+
+            rows--;
+        }
+
+        void clearColumn(){
+            Cell<T> *current = selected;
+
+            // getting to the top of column
+            while (current->up != nullptr){
+                current = current->up;
+            }
+
+            // clearing the column
+            while (current){
+                current->data = "0";
+                current = current->down;
+            }
+        }
+
+        void clearRow(){
+            Cell<T> *current = selected;
+
+            // getting to the left of row
+            while (current->left != nullptr){
+                current = current->left;
+            }
+
+            while (current){
+                current->data = "0";
+                current = current->right;
+            }
+        }
+
+        void print(){
+            Cell<T> *temp = head;
+            Cell<T> *rowTraverser;
+            for (int i = 0; i <= cols; i++){
+                cout << i << "  ";
+            }
+            cout << endl;
+            for (int i = 0; i < rows; i++){
+                cout << i + 1 << " |";
+                rowTraverser = temp;
+                for (int j = 0; j < cols; j++){
+                    cout << rowTraverser->color << rowTraverser->data << " |";
+                    rowTraverser = rowTraverser->right;
+                }
+                cout << endl;
+                temp = temp->down;
+            }
+        }
+};
+
+template <typename T>
+class Range{
+    public:
+        Excel<T> *excel;
+        Cell<T> *start;
