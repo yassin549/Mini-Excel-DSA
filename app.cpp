@@ -856,3 +856,99 @@ class Range{
     public:
         Excel<T> *excel;
         Cell<T> *start;
+        Cell<T> *end;
+        vector<Cell<T>*> *cells;
+        vector<T> *data;
+
+        Range(Excel<T> excel){
+            this->excel = excel;
+            this->start = nullptr;
+            this->end = nullptr;
+            cells = new vector<Cell<T>>();
+        }
+
+        Range(){
+            excel = nullptr;
+            start = nullptr;
+            end = nullptr;
+            cells = new vector<Cell<T>*>();
+        }
+
+        void CellLabeler(){
+            // giving each cell row and column number
+            int r = excel->rows;
+            int c = excel->cols;
+            Cell<T> *temp = excel->head;
+            Cell<T> *rowTraverser;
+
+            for (int i = 0; i < r; i++){
+                rowTraverser = temp;
+                for (int j = 0; j < c; j++){
+                    rowTraverser->row = i;
+                    rowTraverser->col = j;
+                    rowTraverser = rowTraverser->right;
+                }
+                temp = temp->down;
+            }
+        }
+
+        void fillVector(){
+            // if end is at right of start and above
+            if (start->col <= end->col && start->row >= end->row){
+                Cell<T> *temp = start;
+                Cell<T> *rowTraverser = temp;
+                for (int i = start->row; i >= end->row; i--){
+                    for (int j = start->col; j <= end->col; j++){
+                        cells->push_back(temp);
+                        temp = temp->right;
+                    }
+                    rowTraverser = rowTraverser->up;
+                    temp = rowTraverser;
+                }
+            }
+            else if (start->col <= end->col && start->row < end->row){
+                // if end is at right of start and below
+                Cell<T> *temp = start;
+                Cell<T> *rowTraverser = temp;
+                for (int i = start->row; i <= end->row; i++){
+                    for (int j = start->col; j <= end->col; j++){
+                        cells->push_back(temp);
+                        temp = temp->right;
+                    }
+                    rowTraverser = rowTraverser->down;
+                    temp = rowTraverser;
+                }
+            }
+            else if (start->col > end->col && start->row > end->row){
+                // if start is at right of end and below
+                Cell<T> *temp = start;
+                Cell<T> *rowTraverser = temp;
+                for (int i = start->row; i >= end->row; i--){
+                    for (int j = start->col; j >= end->col; j--){
+                        cells->push_back(temp);
+                        temp = temp->left;
+                    }
+                    rowTraverser = rowTraverser->up;
+                    temp = rowTraverser;
+                }
+            }
+            else if (start->col > end->col && start->row < end->row){
+                // if start is at right of end and above
+                Cell<T> *temp = start;
+                Cell<T> *rowTraverser = temp;
+                for (int i = start->row; i <= end->row; i++){
+                    for (int j = start->col; j >= end->col; j--){
+                        cells->push_back(temp);
+                        temp = temp->left;
+                    }
+                    rowTraverser = rowTraverser->down;
+                    temp = rowTraverser;
+                }
+            }
+        }
+
+        int calculateSum(){
+            int sum = 0;
+            string temp = "";
+            for (int i = 0; i < cells->size(); i++){
+                temp = tostring(cells->at(i)->data);
