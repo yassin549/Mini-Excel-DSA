@@ -952,3 +952,99 @@ class Range{
             string temp = "";
             for (int i = 0; i < cells->size(); i++){
                 temp = tostring(cells->at(i)->data);
+               sum += stoi(temp);
+            }
+            return sum;
+        
+        }
+
+        float calculateAverage(){
+            return round(((float)calculateSum() / cells->size()) * 10) / 10.0;
+        }
+
+        int calculateCount(){
+            return cells->size();
+        }
+
+        int calculateMax(){
+            int max = INT_MIN;
+            string temp = "";
+            for (int i = 0; i < cells->size(); i++){
+                temp = tostring(cells->at(i)->data);
+                if (max < stoi(temp)){
+                    max = stoi(temp);
+                }
+            }
+            return max;
+        }
+
+        int calculateMin(){
+            int min = INT_MAX;
+            string temp = "";
+            for (int i = 0; i < cells->size(); i++){
+                temp = tostring(cells->at(i)->data);
+                if (min > stoi(temp)){
+                    min = stoi(temp);
+                }
+            }
+            return min;
+        }
+
+        void copy(){
+            data = new vector<T>();
+
+            for (int i = 0; i < cells->size(); i++){
+                data->push_back(cells->at(i)->data);
+            }
+        }
+
+        void cut(){
+            // copying the data
+            copy();
+
+            // deleting the cells
+            for (int i = 0; i < cells->size(); i++){
+                cells->at(i)->data = "0";
+            }
+        }
+
+        void paste(){
+            int idx = data->size() - 1;
+
+            // end is at the top left corner of selection rectangle
+            if (end->col <= start->col && end->row <= start->row){
+                Cell<T> *temp = excel->selected;
+                Cell<T> *rowTraverser = temp;
+
+                for (int i = end->row; i <= start->row; i++){
+                    for (int j = end->col; j <= start->col; j++){
+                        rowTraverser->data = data->at(idx);
+                        idx--;
+                        if (rowTraverser->right == nullptr){
+                            excel->makeNewColumnAtRight();
+                            excel->cols++;
+                        }
+                        rowTraverser = rowTraverser->right;
+                    }
+                    if (rowTraverser->down == nullptr){
+                        excel->makeNewRowAtBottom();
+                        excel->rows++;
+                    }
+                    temp = temp->down;
+                    rowTraverser = temp;
+                }
+            }
+
+            // end is left and below start
+            if (start->col > end->col && start->row < end->row){
+                Cell<T> *temp = excel->selected;
+                Cell<T> *rowTraverser = temp;
+
+                int idx = start->col - end->col + 1;
+                int c = 1;
+
+                for (int i = start->row; i <= end->row; i++){
+                    for (int j = start->col; j >= end->col; j--){
+                        rowTraverser->data = data->at(idx-1);
+                        idx--;
+                        if (rowTraverser->right == nullptr){
