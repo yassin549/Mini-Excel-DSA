@@ -1048,3 +1048,99 @@ class Range{
                         rowTraverser->data = data->at(idx-1);
                         idx--;
                         if (rowTraverser->right == nullptr){
+
+                             excel->makeNewColumnAtRight();
+                            excel->cols++;
+                        }
+                        rowTraverser = rowTraverser->right;
+                    }
+                    c++;
+                    idx = c * (start->col - end->col + 1);
+                    if (rowTraverser->down == nullptr){
+                        excel->makeNewRowAtBottom();
+                        excel->rows++;
+                    }
+                    temp = temp->down;
+                    rowTraverser = temp;
+                }
+            }
+
+            // end is right and below start
+            if (start->col <= end->col && start->row < end->row){
+                Cell<T> *temp = excel->selected;
+                Cell<T> *rowTraverser = temp;
+
+                int idx = 0;
+
+                for (int i = start->row; i <= end->row; i++){
+                    for (int j = start->col; j <= end->col; j++){
+                        rowTraverser->data = data->at(idx);
+                        idx++;
+                        if (rowTraverser->right == nullptr){
+                            excel->makeNewColumnAtRight();
+                            excel->cols++;
+                        }
+                        rowTraverser = rowTraverser->right;
+                    }
+                    if (rowTraverser->down == nullptr){
+                        excel->makeNewRowAtBottom();
+                        excel->rows++;
+                    }
+                    temp = temp->down;
+                    rowTraverser = temp;
+                }
+            }
+
+            // end is right and above start
+            if (start->col <= end->col && start->row >= end->row){
+                Cell<T> *temp = excel->selected;
+                Cell<T> *rowTraverser = temp;
+
+                int c = start->row - end->row;
+                int idx = c * (end->col - start->col + 1);
+
+                for (int i = start->row; i >= end->row; i--){
+                    for (int j = start->col; j <= end->col; j++){
+                        rowTraverser->data = data->at(idx);
+                        idx++;
+                        if (rowTraverser->right == nullptr){
+                            excel->makeNewColumnAtRight();
+                            excel->cols++;
+                        }
+                        rowTraverser = rowTraverser->right;
+                    }
+                    c--;
+                    idx = c * (end->col - start->col + 1);
+                    if (rowTraverser->down == nullptr){
+                        excel->makeNewRowAtBottom();
+                        excel->rows++;
+                    }
+                    temp = temp->down;
+                    rowTraverser = temp;
+                }
+            }
+        }
+};
+
+template <typename T>
+class FrontEnd{
+
+    public:
+
+        Excel<T> *excel;
+    
+        FrontEnd(Excel<T> excel){
+            this->excel = excel;
+        }
+
+        FrontEnd(){
+            excel = nullptr;
+        }
+
+        void printKeyManual(){
+        cout << "Use arrow keys to navigate" << endl;
+        cout << "Use space to enter data" << endl;
+        cout << "Use escape to exit" << endl;
+        cout << "Press CTRL + A to insert row above selected cell" << endl;
+        cout << "Press CTRL + B to insert row below selected cell" << endl;
+        cout << "Press CTRL + R to insert column to the right of selected cell" << endl;
