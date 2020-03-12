@@ -1144,3 +1144,99 @@ class FrontEnd{
         cout << "Press CTRL + A to insert row above selected cell" << endl;
         cout << "Press CTRL + B to insert row below selected cell" << endl;
         cout << "Press CTRL + R to insert column to the right of selected cell" << endl;
+        cout << "Press CTRL + L to insert column to the left of selected cell" << endl;
+        cout << "Press CTRL + I to insert cells by right shift" << endl;
+        cout << "Press CTRL + K to insert cells by down shift" << endl;
+        cout << "Press CTRL + O to delete cells by left shift" << endl;
+        cout << "Press CTRL + U to delete cells by up shift" << endl;
+        cout << "Press CTRL + D to delete column" << endl;
+        cout << "Press CTRL + E to delete row" << endl;
+        cout << "Press CTRL + M to clear column" << endl;
+        cout << "Press CTRL + N to clear row" << endl;
+        cout << "Press F1 key to select range of cells" << endl;
+        }
+
+        void RangeSelection(Excel<T> *excel, Range<T> *range){
+            // storing current selected cell
+            Cell<T> *current = excel->selected;
+
+            // selecting cells
+            cout << "Select Starting cell..." << endl;
+
+            bool selecting = true, modify = false;
+            Sleep(100);
+            while (selecting){
+                arrowMovement("\33[35m", modify);
+                if (GetAsyncKeyState(VK_F1)){
+                    if (range->start == nullptr){
+                        range->start = excel->selected;
+                        cout << "Start cell selected" << endl;
+                        cout << "Select End cell..." << endl;
+                        modify = true;
+                    }
+                    else{
+                        range->end = excel->selected;
+                        cout << "End cell selected" << endl;
+                        selecting = false;
+                        range->start->color = "\33[37m";
+                        range->end->color = "\33[37m";
+                    }
+                }
+                Sleep(100);
+
+                if (modify){
+                    modify = false;
+                    system("cls");
+                    printKeyManual();
+                    excel->print();
+                    if (range->start != nullptr){
+                        range->start->color = "\33[35m";
+                        cout << "Start cell selected" << endl;
+                        cout << "Select end cell" << endl;
+                    }
+                    else{
+                        cout << "Select start cell" << endl;
+                    }
+                }
+            }
+
+            // resetting the selected cell to default
+            excel->selected = current;
+        }
+
+        void rangeOption(Range<T> *range){
+            string option;
+            system("cls");
+            cout << "1. Sum" << endl;
+            cout << "2. Average" << endl;
+            cout << "3. Count" << endl;
+            cout << "4. Max" << endl;
+            cout << "5. Min" << endl;
+            cout << "6. Copy/Paste" << endl;
+            cout << "7. Cut/Paste" << endl;
+            cout << "0. Back" << endl;
+            cout << "Enter option:";
+            cin >> option;
+
+            if (option == "1"){
+                // sum
+                excel->selected->data = validString(to_string(range->calculateSum()));
+            }
+            else if (option == "2"){
+                // avg
+                excel->selected->data = validString(to_string(range->calculateAverage()));
+            }
+            else if (option == "3"){
+                // count
+                excel->selected->data = validString(to_string(range->calculateCount()));
+            }
+            else if (option == "4"){
+                // max
+                excel->selected->data = validString(to_string(range->calculateMax()));
+            }
+            else if (option == "5"){
+                // min
+                excel->selected->data = validString(to_string(range->calculateMin()));
+            }
+            else if (option == "6"){
+                // copy
