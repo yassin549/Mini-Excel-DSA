@@ -1240,3 +1240,132 @@ class FrontEnd{
             }
             else if (option == "6"){
                 // copy
+                range->copy();
+                range->paste();
+            }
+            else if (option == "7"){
+                // cut
+                range->cut();
+                range->paste();
+            }
+            else{
+                cout << "Invalid option!" << endl;
+                cout << "Reverting back to main screen" << endl;
+                Sleep(500);
+            }
+        }
+
+        string validString(string data){
+            string temp = "";
+            if (data.length() > 4){
+                for (int i = 0; i < 4; i++){
+                    temp += data[i];
+                }
+                return temp;
+            }
+            return data;
+        }
+
+        string takeValidData(){
+            cout << "Enter data: ";
+            string data;
+            cin >> data;
+            if (contains(data, ',')){
+                cout << "Invalid input!" << endl;
+                return takeValidData();
+            }
+            return validString(data);
+        }
+
+        bool contains(string data, char c){
+            for (int i = 0; i < data.length(); i++){
+                if (data[i] == c){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void arrowMovement(string color, bool &modify){
+            if (GetAsyncKeyState(VK_UP) && excel->selected->up){
+                excel->selected->color = "\33[37m";
+                excel->selected = excel->selected->up;
+                excel->selected->color = color;
+                modify = true;
+            }
+            if (GetAsyncKeyState(VK_DOWN) && excel->selected->down){
+                excel->selected->color = "\33[37m";
+                excel->selected = excel->selected->down;
+                excel->selected->color = color;
+                modify = true;
+            }
+            if (GetAsyncKeyState(VK_LEFT) && excel->selected->left){
+                excel->selected->color = "\33[37m";
+                excel->selected = excel->selected->left;
+                excel->selected->color = color;
+                modify = true;
+            }
+            if (GetAsyncKeyState(VK_RIGHT) && excel->selected->right){
+                excel->selected->color = "\33[37m";
+                excel->selected = excel->selected->right;
+                excel->selected->color = color;
+                modify = true;
+            }
+        }
+};
+
+
+
+int main(){
+
+    Excel<string> *excel = new Excel<string>();
+    FrontEnd<string> *frontEnd = new FrontEnd<string>();
+    frontEnd->excel = excel;
+
+    frontEnd->printKeyManual();
+    excel->print();
+
+    bool running = true, modify = false;
+
+    while (running){
+        frontEnd->arrowMovement("\33[33m", modify);
+        if (GetAsyncKeyState(VK_SPACE)){
+            excel->selected->data = frontEnd->takeValidData();
+            modify = true;
+        }
+        else if (GetAsyncKeyState(VK_CONTROL)){
+
+            if (GetAsyncKeyState('A')){
+                excel->insertAbove();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('B')){
+                excel->insertBelow();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('R')){
+                excel->insertRight();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('L')){
+                excel->insertLeft();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('I')){
+                excel->insertCellByRightShift();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('K')){
+                excel->insertCellByDownShift();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('O')){
+                excel->deleteCellByLeftShift();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('U')){
+                excel->deleteCellByUpShift();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('D')){
+                excel->deleteColumn();
