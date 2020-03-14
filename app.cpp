@@ -1369,3 +1369,35 @@ int main(){
             }
             else if (GetAsyncKeyState('D')){
                 excel->deleteColumn();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('E')){
+                excel->deleteRow();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('M')){
+                excel->clearColumn();
+                modify = true;
+            }
+            else if (GetAsyncKeyState('N')){
+                excel->clearRow();
+                modify = true;
+            }
+        }
+        if (GetAsyncKeyState(VK_F1)){
+            try{
+                // range selection
+                Range<string> *range = new Range<string>();
+                range->excel = excel;
+                range->CellLabeler();
+                frontEnd->RangeSelection(excel, range);
+                range->fillVector();
+                frontEnd->rangeOption(range);
+            }
+            catch(...) {
+                cout << "There must be a type error!" << endl;
+                Sleep(500);
+            }
+            modify = true;
+        }
+        if (GetAsyncKeyState(VK_ESCAPE)){
