@@ -1401,3 +1401,18 @@ int main(){
             modify = true;
         }
         if (GetAsyncKeyState(VK_ESCAPE)){
+            running = false;
+            system("cls");
+        }
+
+        if (modify){
+            system("cls");
+            frontEnd->printKeyManual();
+            excel->print();
+            modify = false;
+        }
+
+        Sleep(100);
+    }
+    return 0;
+}
