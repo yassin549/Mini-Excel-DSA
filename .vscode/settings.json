@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "*.rh": "cpp",
+        "ios": "cpp",
+        "xstring": "cpp",
+        "format": "cpp",
+        "vector": "cpp",
+        "cmath": "cpp",
+        "limits": "cpp"
+    }
+}
