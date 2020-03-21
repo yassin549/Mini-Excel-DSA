@@ -18,7 +18,7 @@ Console-Based Mini Excel is a simple command-line tool that utilizes the concept
 
 #### Clone the repository to your local machine
 ```
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/yassin549/Mini-Excel-DSAt
 ```
 #### Alternatively, download the ZIP file and extract it
 #### Navigate to the project directory
@@ -27,7 +27,7 @@ cd your-repository
 ```
 #### Compile the source code (if needed)
 ```
-g++ your-file.cpp -o your-executable]
+g++ app.cpp -o your-executable
 ```
 ## Usage
 
@@ -52,7 +52,7 @@ g++ your-file.cpp -o your-executable]
 
 Run the executable file created by compiler.
 ```
-miniexcel.exe
+app.exe
 ```
 
 ## Examples
@@ -83,4 +83,7 @@ The data was selected in the correct order and pasted as well.
 ## Disclaimer
 
 This project is for educational purposes and may not be suitable for production environments.
+
+## Contact 
+- For any kind of query about this project,reach out and contact at officialyassinkhoualdi@gmail.com.
 
