@@ -23,11 +23,11 @@ git clone https://github.com/yassin549/Mini-Excel-DSAt
 #### Alternatively, download the ZIP file and extract it
 #### Navigate to the project directory
 ```
-cd your-repository
+cd Mini-Excel-DSA
 ```
 #### Compile the source code (if needed)
 ```
-g++ app.cpp -o your-executable
+g++ app.cpp -o app.exe
 ```
 ## Usage
 
